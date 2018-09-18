@@ -54,10 +54,10 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
-import org.apache.maven.shared.artifact.DefaultArtifactCoordinate;
-import org.apache.maven.shared.artifact.deploy.ArtifactDeployer;
-import org.apache.maven.shared.artifact.deploy.ArtifactDeployerException;
-import org.apache.maven.shared.repository.RepositoryManager;
+import org.apache.maven.shared.transfer.artifact.DefaultArtifactCoordinate;
+import org.apache.maven.shared.transfer.artifact.deploy.ArtifactDeployer;
+import org.apache.maven.shared.transfer.artifact.deploy.ArtifactDeployerException;
+import org.apache.maven.shared.transfer.repository.RepositoryManager;
 import org.apache.maven.shared.utils.Os;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -214,11 +214,7 @@ public class DeployFileMojo
     void initProperties()
         throws MojoExecutionException
     {
-        if ( pomFile != null )
-        {
-            processModel( readModel( pomFile ) );
-        }
-        else
+        if ( pomFile == null )
         {
             boolean foundPom = false;
 
@@ -300,6 +296,10 @@ public class DeployFileMojo
                 }
             }
         }
+        else
+        {
+            processModel( readModel( pomFile ) );
+        }
 
         if ( packaging == null && file != null )
         {
@@ -378,10 +378,6 @@ public class DeployFileMojo
             }
         }
 
-        if ( updateReleaseInfo )
-        {
-            artifact.setRelease( true );
-        }
         artifact.setRepository( deploymentRepository );
 
         if ( sources != null )
